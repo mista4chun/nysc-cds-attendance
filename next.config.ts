@@ -1,7 +1,19 @@
-import type { NextConfig } from "next";
+// next.config.ts
+import type { NextConfig } from 'next'
 
-const nextConfig: NextConfig = {
-  /* config options here */
-};
+const config: NextConfig = {
+  // No withPWA wrapper needed — manifest.ts handles it
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: '*.supabase.co',  // for profile photos from Supabase Storage
+      },
+    ],
+  },
+  // Required for QR scanner library
+  transpilePackages: ['html5-qrcode'],
+}
 
-export default nextConfig;
+export default config
+
