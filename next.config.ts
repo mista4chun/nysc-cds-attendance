@@ -13,6 +13,9 @@ const config: NextConfig = {
   },
   // Required for QR scanner library
   transpilePackages: ['html5-qrcode'],
+  
+  allowedDevOrigins: ['chalice-pester-cough.ngrok-free.dev'],
+
 }
 
 export default config

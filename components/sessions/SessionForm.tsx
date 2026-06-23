@@ -11,7 +11,7 @@ import { MapPin, Loader2, LocateFixed, Clock, AlertCircle } from 'lucide-react'
 
 // ── Validation ────────────────────────────────────────────────
 const SessionSchema = z.object({
-  cds_group_id:   z.string().uuid('Select a CDS group'),
+  cds_group_id:    z.string().min(1, 'Select a CDS group'),
   title:          z.string().min(2, 'Title is required').max(100),
   location_name:  z.string().min(2, 'Location name is required').max(150),
   latitude:       z.number({ invalid_type_error: 'Capture your GPS location' }),
@@ -55,6 +55,8 @@ export function SessionForm({ groups, defaultGroupId }: Props) {
     formState: { errors, isSubmitting },
   } = useForm<SessionFields>({
     resolver: zodResolver(SessionSchema),
+     mode: 'onSubmit',        // ← add this
+  reValidateMode: 'onSubmit', // ← and this
     defaultValues: {
       cds_group_id:   defaultGroupId ?? '',
       date:           today,
@@ -63,6 +65,17 @@ export function SessionForm({ groups, defaultGroupId }: Props) {
       allowed_radius: 200,
     },
   })
+
+  // Set group value explicitly on mount when coming from a group page
+  useEffect(() => {
+    if (defaultGroupId) {
+      setValue('cds_group_id', defaultGroupId, {
+        shouldValidate: true,
+        shouldDirty:    true,
+        shouldTouch:    true,
+      })
+    }
+  }, [defaultGroupId, setValue])
 
   const lat     = watch('latitude')
   const lon     = watch('longitude')
@@ -99,11 +112,11 @@ export function SessionForm({ groups, defaultGroupId }: Props) {
   // ── Submit ────────────────────────────────────────────────
   const onSubmit = async (data: SessionFields) => {
     setServerError('')
-
     // Combine date + time into ISO strings
     const start_time = new Date(`${data.date}T${data.start_time}:00`).toISOString()
     const end_time   = new Date(`${data.date}T${data.end_time}:00`).toISOString()
-
+    
+   console.log(data)
     try {
       const res = await fetch('/api/qr/generate', {
         method: 'POST',
@@ -137,19 +150,29 @@ export function SessionForm({ groups, defaultGroupId }: Props) {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-
+        
       {/* CDS Group */}
       <Card>
         <Field label="CDS Group" error={errors.cds_group_id?.message} required>
-          <select
-            {...register('cds_group_id')}
-            className={inputCls(!!errors.cds_group_id)}
-          >
-            <option value="">Select a group…</option>
-            {groups.map(g => (
-              <option key={g.id} value={g.id}>{g.name}</option>
-            ))}
-          </select>
+          {defaultGroupId ? (
+            <>
+              <input type="hidden" {...register('cds_group_id')}  />
+              <div className={inputCls(false) + ' bg-gray-50 text-gray-700 flex items-center gap-2'}>
+                <span className="w-2 h-2 rounded-full bg-green-500 flex-shrink-0" />
+                {groups.find(g => g.id === defaultGroupId)?.name ?? 'Selected group'}
+              </div>
+            </>
+          ) : (
+            <select
+              {...register('cds_group_id')}
+              className={inputCls(!!errors.cds_group_id)}
+            >
+              <option value="">Select a group…</option>
+              {groups.map(g => (
+                <option key={g.id} value={g.id}>{g.name}</option>
+              ))}
+            </select>
+          )}
         </Field>
 
         {/* Session title */}

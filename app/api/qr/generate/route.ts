@@ -5,7 +5,7 @@ import * as jose from 'jose';
 import { z } from 'zod';
 
 const SessionSchema = z.object({
-  cds_group_id: z.string().uuid('Select a CDS group'),
+cds_group_id: z.string().min(1, 'Select a CDS group'),
   title: z.string().min(1).max(100),
   location_name: z.string().min(1).max(150),
   latitude: z.number(),

@@ -42,6 +42,8 @@ export function QRScanner() {
     )
   }, [])
 
+
+
   const startScan = async () => {
     if (!gpsReady || !coords) return
     setStatus('scanning')
