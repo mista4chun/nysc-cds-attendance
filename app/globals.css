@@ -128,3 +128,33 @@
     @apply font-sans;
   }
 }
+
+@media print {
+  /* Hide everything */
+  body * {
+    visibility: hidden;
+  }
+
+  /* Show only the QR print zone and its children */
+  .qr-print-zone,
+  .qr-print-zone * {
+    visibility: visible;
+  }
+
+  /* Position it top-left to fill the print page */
+  .qr-print-zone {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem;
+  }
+
+  /* Hide the print button itself when printing */
+  .no-print {
+    display: none !important;
+  }
+}

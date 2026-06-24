@@ -140,6 +140,13 @@ export async function POST(req: NextRequest) {
     )
   }
 
+  // Bypass gps tracking
+//   const distanceMetres = haversineDistance(
+//   latitude, longitude,
+//   session.latitude, session.longitude,
+// )
+// console.log(`[verify] Distance from venue: ${Math.round(distanceMetres)}m`)
+
   // ── CHECK 6: No duplicate check-in ───────────────────────
   const { data: existing } = await supabase
     .from('attendance_records')

@@ -57,7 +57,7 @@ export function QRDisplay({ scanUrl, sessionTitle, locationName, endTime }: Prop
   }, [endTime])
 
   return (
-    <div className="flex flex-col items-center gap-4 p-6 rounded-xl border bg-white">
+    <div className="qr-print-zone  flex flex-col items-center gap-4 p-6 rounded-xl border bg-white">
       <div className="text-center">
         <h2 className="text-lg font-medium">{sessionTitle}</h2>
         <p className="text-sm text-muted-foreground">{locationName}</p>
@@ -84,7 +84,7 @@ export function QRDisplay({ scanUrl, sessionTitle, locationName, endTime }: Prop
         variant="outline"
         size="sm"
         onClick={() => window.print()}
-        className="mt-1"
+        className="mt-1 no-print"
       >
         Print QR code
       </Button>
