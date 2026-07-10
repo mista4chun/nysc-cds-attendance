@@ -84,8 +84,8 @@ export async function GET(req: NextRequest) {
 
   // ── Summary stats ─────────────────────────────────────────
   const { data: summary } = await supabase
-    .from('v_attendance_summary')
-    .select('user_id, full_name, state_code, group_name, attendance_pct, present_count, total_sessions, clearance_eligible')
+    .from('v_current_month_attendance')
+    .select('user_id, full_name, state_code, group_name, attendance_pct, present_count, sessions_held, cleared')
     .order('attendance_pct', { ascending: true })
 
   const { data: groups } = await supabase
@@ -243,7 +243,7 @@ export async function GET(req: NextRequest) {
           d.state_code,
           d.group_name ?? '—',
           `${d.attendance_pct ?? 0}%`,
-          d.clearance_eligible ? 'Eligible' : 'Not eligible',
+          d.cleared ? 'Eligible' : 'Not eligible',
         ]),
         styles:      { fontSize: 8, cellPadding: 2 },
         headStyles:  { fillColor: [180, 40, 40], textColor: [255, 255, 255], fontStyle: 'bold' },
@@ -356,10 +356,10 @@ export async function GET(req: NextRequest) {
         m.full_name,
         m.state_code,
         m.group_name ?? '—',
-        m.total_sessions,
+        m.sessions_held,
         m.present_count,
         `${m.attendance_pct ?? 0}%`,
-        m.clearance_eligible ? 'Yes' : 'No',
+        m.cleared ? 'Yes' : 'No',
       ]),
     ]
     const wsMember = XLSX.utils.aoa_to_sheet(memberData)
@@ -380,7 +380,7 @@ export async function GET(req: NextRequest) {
         d.state_code,
         d.group_name ?? '—',
         `${d.attendance_pct ?? 0}%`,
-        d.clearance_eligible ? 'Eligible' : 'Not Eligible',
+        d.cleared ? 'Eligible' : 'Not Eligible',
       ]),
     ]
     const wsDefaulters = XLSX.utils.aoa_to_sheet(defaultersData)

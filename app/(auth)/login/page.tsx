@@ -7,6 +7,9 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { createClient } from '@/lib/supabase/client';
+import Link from 'next/link';
+import Image from 'next/image';
+import logo from '@/public/logo.png';
 
 // ── Validation schema ─────────────────────────────────────────
 const LoginSchema = z.object({
@@ -63,10 +66,10 @@ export default function LoginPage() {
       password: data.password,
     });
 
-    console.log('email being sent:', email);
-    console.log('error:', error?.message);
-    console.log('error code:', error?.status);
-    console.log('auth data:', authData?.user?.id);
+    // console.log('email being sent:', email);
+    // console.log('error:', error?.message);
+    // console.log('error code:', error?.status);
+    // console.log('auth data:', authData?.user?.id);
 
     if (error) {
       setLoading(false);
@@ -100,8 +103,15 @@ export default function LoginPage() {
     <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center px-4">
       {/* Header */}
       <div className="mb-8 text-center">
-        <div className="w-16 h-16 rounded-full bg-green-700 flex items-center justify-center mx-auto mb-4">
-          <span className="text-white font-bold text-xl">CDS</span>
+        <div className="w-48 h-48 flex items-center justify-center mx-auto">
+          <Image
+            src={logo}
+            alt="CDS Logo"
+            className="w-full h-full object-contain"
+            width={192}
+            height={192}
+            priority
+          />
         </div>
         <h1 className="text-2xl font-semibold text-gray-900">
           NYSC CDS Attendance
@@ -189,8 +199,15 @@ export default function LoginPage() {
         </form>
 
         {/* Help text */}
-        <p className="mt-4 text-xs text-center text-gray-400">
-          First time? Contact your CLO to get your login details.
+
+        <p className="mt-2 text-sm text-center text-muted-foreground">
+          New corps member?{' '}
+          <Link
+            href="/signup"
+            className="text-primary font-medium hover:underline"
+          >
+            Create account
+          </Link>
         </p>
       </div>
 

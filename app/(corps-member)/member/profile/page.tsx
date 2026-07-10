@@ -19,14 +19,14 @@ export default async function ProfilePage() {
       .eq('id', user.id)
       .single(),
     supabase
-      .from('v_attendance_summary')
-      .select('attendance_pct, present_count, total_sessions, clearance_eligible')
+      .from('v_current_month_attendance')
+      .select('attendance_pct, present_count,  sessions_held, cleared')
       .eq('user_id', user.id)
       .single(),
   ])
 
   const groupName = (profile?.cds_groups as any)?.name
-  const eligible  = summary?.clearance_eligible ?? false
+  const eligible  = summary?.cleared ?? false
   const pct       = summary?.attendance_pct     ?? 0
 
   return (
@@ -68,7 +68,7 @@ export default async function ProfilePage() {
             <p className="text-[10px] text-gray-400 mt-0.5">Present</p>
           </div>
           <div className="bg-gray-50 rounded-xl py-3">
-            <p className="text-2xl font-bold text-gray-800">{summary?.total_sessions ?? 0}</p>
+            <p className="text-2xl font-bold text-gray-800">{summary?.sessions_held ?? 0}</p>
             <p className="text-[10px] text-gray-400 mt-0.5">Sessions</p>
           </div>
         </div>

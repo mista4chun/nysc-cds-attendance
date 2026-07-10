@@ -13,11 +13,13 @@ export default async function LGIDashboard() {
 
   const [
     { count: totalMembers },
-    { data: groups },
+    { data: groupsRaw },
     { data: recentSessions },
     { data: summary },
     { data: monthlySessions },
   ] = await Promise.all([
+
+    
     supabase.from('users').select('*', { count: 'exact', head: true }).eq('role', 'corps_member'),
     supabase.from('v_group_attendance').select('*').order('name'),
     supabase
@@ -25,9 +27,10 @@ export default async function LGIDashboard() {
       .select('id, title, start_time, cds_groups(name)')
       .order('start_time', { ascending: false })
       .limit(5),
-    supabase
-      .from('v_attendance_summary')
-      .select('attendance_pct, clearance_eligible, present_count, total_sessions'),
+  supabase
+  .from('v_current_month_attendance')
+  .select('attendance_pct, cleared, present_count, sessions_held'),
+
     // Last 6 months of sessions for trend chart
     supabase
       .from('attendance_sessions')
@@ -36,8 +39,17 @@ export default async function LGIDashboard() {
       .order('start_time'),
   ])
 
+  const groups = (groupsRaw ?? []) as {
+  id:                 string
+  name:               string
+  meeting_day:        string
+  member_count:       number
+  total_sessions:     number
+  avg_attendance_pct: number
+}[]
+
   // Compute LGA stats
-  const eligible      = summary?.filter(s => s.clearance_eligible).length ?? 0
+  const eligible      = summary?.filter(s => s.cleared).length ?? 0
   const notEligible   = (totalMembers ?? 0) - eligible
   const avgAttendance = summary && summary.length > 0
     ? Math.round(summary.reduce((a, s) => a + (s.attendance_pct ?? 0), 0) / summary.length)
@@ -57,7 +69,7 @@ export default async function LGIDashboard() {
       avgAttendance={avgAttendance}
       eligible={eligible}
       notEligible={notEligible}
-      groups={groups ?? []}
+     groups={groups}
       recentSessions={recentSessions ?? []}
       trendData={trendData}
     />

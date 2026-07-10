@@ -17,6 +17,9 @@ import {
   ChevronRight,
   Bell,
 } from 'lucide-react';
+// import { ThemeToggle } from '@/components/layout/ThemeToggle';
+import Image from 'next/image';
+import logo from '@/public/logo.png';
 
 const NAV = [
   { href: '/clo/dashboard', label: 'Dashboard', icon: LayoutDashboard },
@@ -64,19 +67,19 @@ export default function CLOLayout({ children }: { children: React.ReactNode }) {
 
   return (
     <RoleGuard allowed="clo">
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-background">
         {/* ── Top bar (mobile) ─────────────────────────────── */}
-        <header className="lg:hidden fixed top-0 left-0 right-0 z-40 bg-white border-b border-gray-200 h-14 flex items-center justify-between px-4">
+        <header className="lg:hidden fixed top-0 left-0 right-0 z-40 bg-card border-b border-border h-14 flex items-center justify-between px-4">
           <button
             onClick={() => setSidebarOpen(true)}
-            className="p-1.5 rounded-lg hover:bg-gray-100"
+            className="p-1.5 rounded-lg hover:bg-accent"
             aria-label="Open menu"
           >
-            <Menu size={20} className="text-gray-600" />
+            <Menu size={20} className="text-muted-foreground" />
           </button>
           <span className="font-semibold text-green-800 text-sm">NYSC CDS</span>
-          <button className="p-1.5 rounded-lg hover:bg-gray-100 relative">
-            <Bell size={20} className="text-gray-600" />
+          <button className="p-1.5 rounded-lg hover:bg-accent relative">
+            <Bell size={20} className="text-muted-foreground" />
           </button>
         </header>
 
@@ -91,22 +94,28 @@ export default function CLOLayout({ children }: { children: React.ReactNode }) {
         {/* ── Sidebar ──────────────────────────────────────── */}
         <aside
           className={`
-        fixed top-0 left-0 h-full w-64 bg-white border-r border-gray-200 z-50
+        fixed top-0 left-0 h-full w-64 bg-card  border-r border-border z-50
         flex flex-col transition-transform duration-200
         lg:translate-x-0
         ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
       `}
         >
           {/* Sidebar header */}
-          <div className="h-14 flex items-center justify-between px-4 border-b border-gray-200">
-            <div className="flex items-center gap-2.5">
-              <div className="w-7 h-7 rounded-lg bg-green-700 flex items-center justify-center">
-                <span className="text-white text-xs font-bold">CDS</span>
+          <div className="h-14 flex items-center justify-between px-4 border-b border-border">
+            <div className="flex items-center mt-1 ">
+              <div className="w-16 h-16 ">
+                <Image
+                  src={logo}
+                  alt="CDS Logo"
+                  className="w-full h-full object-contain"
+                  priority
+                />
               </div>
-              <span className="font-semibold text-gray-900 text-sm">
-                NYSC Attendance
+              <span className="font-semibold text-foreground text-sm">
+                CDS Attendance
               </span>
             </div>
+            {/* <ThemeToggle /> */}
             <button
               onClick={() => setSidebarOpen(false)}
               className="lg:hidden p-1 rounded hover:bg-gray-100"
@@ -148,7 +157,7 @@ export default function CLOLayout({ children }: { children: React.ReactNode }) {
                   ${
                     active
                       ? 'bg-green-50 text-green-800'
-                      : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                      : 'text-gray-600 hover:bg-accent hover:text-gray-900'
                   }`}
                 >
                   <Icon
@@ -185,7 +194,7 @@ export default function CLOLayout({ children }: { children: React.ReactNode }) {
         </main>
 
         {/* ── Bottom nav (mobile only) ──────────────────────── */}
-        <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-gray-200 flex">
+        <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-border flex">
           {NAV.slice(0, 5).map(({ href, label, icon: Icon }) => {
             const active = pathname === href || pathname.startsWith(href + '/');
             return (

@@ -11,13 +11,13 @@ export default async function LGIReportsPage() {
 
   const [{ data: groups }, { data: summary }] = await Promise.all([
     supabase.from('v_group_attendance').select('*').order('avg_attendance_pct'),
-    supabase.from('v_attendance_summary')
-      .select('full_name, state_code, group_name, attendance_pct, clearance_eligible')
+    supabase.from('v_current_month_attendance')
+      .select('full_name, state_code, group_name, attendance_pct, cleared')
       .order('attendance_pct'),
   ])
 
   const defaulters   = (summary ?? []).filter(m => (m.attendance_pct ?? 0) < 75)
-  const eligible     = (summary ?? []).filter(m => m.clearance_eligible).length
+  const eligible     = (summary ?? []).filter(m => m.cleared).length
   const notEligible  = (summary ?? []).length - eligible
 
   return (
@@ -45,7 +45,7 @@ export default async function LGIReportsPage() {
                   {g.member_count} members · {g.avg_attendance_pct ?? 0}% avg attendance
                 </p>
               </div>
-              <ReportDownloader groupId={g.id} />
+              <ReportDownloader groupId={(g as any).id} />
             </div>
           ))}
         </div>

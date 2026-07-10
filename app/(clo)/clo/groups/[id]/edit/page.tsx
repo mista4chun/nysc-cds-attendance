@@ -6,7 +6,7 @@ import { createClient } from '@/lib/supabase/server'
 import { notFound, redirect } from 'next/navigation'
 import Link             from 'next/link'
 import { ArrowLeft }    from 'lucide-react'
-import { GroupForm }    from '@/components/groups/GroupForm'
+import { GroupForm, MeetingDay }    from '@/components/groups/GroupForm'
 
 export default async function EditGroupPage({
   params,
@@ -45,7 +45,7 @@ export default async function EditGroupPage({
         defaultValues={{
           name:        group.name,
           description: group.description ?? '',
-          meeting_day: group.meeting_day,
+         meeting_day: group.meeting_day as MeetingDay,
         }}
       />
     </div>

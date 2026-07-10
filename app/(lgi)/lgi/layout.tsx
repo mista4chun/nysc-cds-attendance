@@ -8,11 +8,16 @@ import { createClient }           from '@/lib/supabase/client'
 import { RoleGuard }              from '@/components/layout/RoleGuard'
 import {
   LayoutDashboard, FileText,
-  ScrollText, LogOut, Menu, X, ChevronRight
+  ScrollText, LogOut, Menu, X, ChevronRight, 
+  Users
 } from 'lucide-react'
+
+import Image from 'next/image'
+import logo from '@/public/logo.png'
 
 const NAV = [
   { href: '/lgi/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+    { href: '/lgi/members',   label: 'Members',   icon: Users           },
   { href: '/lgi/reportslgi',   label: 'Reports',   icon: FileText        },
   { href: '/lgi/audit',     label: 'Audit log', icon: ScrollText      },
 ]
@@ -70,12 +75,19 @@ export default function LGILayout({ children }: { children: React.ReactNode }) {
           ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
         `}>
           <div className="h-14 flex items-center justify-between px-4 border-b border-gray-200">
-            <div className="flex items-center gap-2.5">
-              <div className="w-7 h-7 rounded-lg bg-blue-900 flex items-center justify-center">
-                <span className="text-white text-xs font-bold">LGI</span>
-              </div>
+            <div className="flex items-center">
+              <div className="w-16 h-16 ">
+                             <Image
+                               src={logo}
+                               alt="CDS Logo"
+                               className="w-full h-full object-contain"
+                               
+                               priority
+                             />
+                           </div>
               <span className="font-semibold text-gray-900 text-sm">LGI Oversight</span>
             </div>
+           
             <button onClick={() => setSidebarOpen(false)} className="lg:hidden p-1 rounded hover:bg-gray-100">
               <X size={16} className="text-gray-500" />
             </button>
@@ -94,11 +106,11 @@ export default function LGILayout({ children }: { children: React.ReactNode }) {
           </div>
 
           <div className="px-3 py-2 flex-1">
-            <div className="mb-2">
+            {/* <div className="mb-2">
               <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider px-3 py-1">
                 Read-only access
               </p>
-            </div>
+            </div> */}
             <nav className="space-y-0.5">
               {NAV.map(({ href, label, icon: Icon }) => {
                 const active = pathname === href || pathname.startsWith(href + '/')

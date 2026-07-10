@@ -21,10 +21,9 @@ export default async function CLOReportsPage() {
       .from('v_group_attendance')
       .select('*')
       .order('avg_attendance_pct', { ascending: true }),
-    supabase
-      .from('v_attendance_summary')
-      .select('user_id, full_name, state_code, group_name, attendance_pct, clearance_eligible, present_count, total_sessions')
-      .order('attendance_pct', { ascending: true }),
+  supabase.from('v_current_month_attendance')
+  .select('user_id, full_name, state_code, group_name, attendance_pct, cleared, present_count, sessions_held')
+  .order('attendance_pct', { ascending: true }),
     supabase
       .from('users')
       .select('*', { count: 'exact', head: true })
@@ -32,7 +31,7 @@ export default async function CLOReportsPage() {
   ])
 
   const defaulters  = (summary ?? []).filter(m => (m.attendance_pct ?? 0) < 75)
-  const eligible    = (summary ?? []).filter(m => m.clearance_eligible).length
+  const eligible    = (summary ?? []).filter(m => m.cleared).length
   const notEligible = (totalMembers ?? 0) - eligible
 
   return (
@@ -90,7 +89,7 @@ export default async function CLOReportsPage() {
                   </span>
                 </div>
               </div>
-              <ReportDownloader groupId={g.id} />
+              <ReportDownloader groupId={(g as any).id} />
             </div>
           ))}
           {(!groups || groups.length === 0) && (
@@ -126,13 +125,13 @@ export default async function CLOReportsPage() {
                   <p className="text-sm font-medium text-gray-900 truncate">{m.full_name}</p>
                   <p className="text-xs text-gray-400">
                     {m.state_code} · {m.group_name ?? '—'} ·{' '}
-                    {m.present_count}/{m.total_sessions} sessions
+                    {m.present_count}/{m.sessions_held} sessions
                   </p>
                 </div>
                 <div className="flex-shrink-0 text-right">
                   <p className="text-sm font-bold text-red-600">{m.attendance_pct}%</p>
                   <p className="text-[10px] text-gray-400">
-                    {m.clearance_eligible ? 'Eligible' : 'Not eligible'}
+                    {m.cleared ? 'Eligible' : 'Not eligible'}
                   </p>
                 </div>
               </div>

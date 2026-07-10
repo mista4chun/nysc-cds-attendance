@@ -2,11 +2,16 @@
 'use client'
 
 import Link from 'next/link'
-import {
-  BarChart, Bar, XAxis, YAxis, CartesianGrid,
-  Tooltip, ResponsiveContainer, PieChart, Pie,
-  Cell, Legend
-} from 'recharts'
+// import {
+//   BarChart, Bar, XAxis, YAxis, CartesianGrid,
+//   Tooltip, ResponsiveContainer, PieChart, Pie,
+//   Cell, Legend
+// } from 'recharts'
+
+ import { BarChartDynamic as BarChart, PieChartDynamic as PieChart,  Bar, XAxis, YAxis, CartesianGrid,
+  Tooltip, ResponsiveContainer, Pie,
+   Cell, Legend } from '@/components/charts/RechartsComponents'
+   
 import { ReportDownloader } from '@/components/reports/ReportDownloader'
 import { Users, CalendarCheck, ShieldCheck, ShieldX, ChevronRight } from 'lucide-react'
 
@@ -126,7 +131,7 @@ export function LGIDashboardClient({
                 </Pie>
                 <Tooltip
                   contentStyle={{ fontSize: 12, borderRadius: 8, border: '1px solid #e5e7eb' }}
-                  formatter={(value: number) => [`${value} members`, '']}
+                  formatter={(value) => [`${value} members`, ''] as any}
                 />
                 <Legend
                   iconType="circle"
@@ -176,7 +181,7 @@ export function LGIDashboardClient({
               />
               <Tooltip
                 contentStyle={{ fontSize: 12, borderRadius: 8, border: '1px solid #e5e7eb' }}
-                formatter={(value: number) => [`${value}%`, 'Attendance']}
+                formatter={(value) => [`${value}%`, 'Attendance'] }
               />
               <Bar dataKey="pct" radius={[0, 4, 4, 0]}>
                 {groups.map((g, i) => (

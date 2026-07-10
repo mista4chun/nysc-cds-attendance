@@ -304,7 +304,13 @@ export default async function SessionDetailPage({
         </div>
       )}
 
-      {isOpen && <LiveAttendanceUpdater sessionId={id} />}
+      {(isOpen || isUpcoming) && (
+        <LiveAttendanceUpdater
+          sessionId={id}
+          intervalMs={isUpcoming ? 15000 : 5000}
+          // 15s while waiting for session to open, 5s once open
+        />
+      )}
 
       {/* QR Code */}
       {isOpen && hasRealToken ? (

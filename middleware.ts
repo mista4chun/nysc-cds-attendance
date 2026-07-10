@@ -1,4 +1,6 @@
 // middleware.ts
+export const runtime = 'nodejs'
+
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse }       from 'next/server'
 import type { NextRequest }   from 'next/server'
@@ -9,22 +11,19 @@ const ROLE_HOME: Record<string, string> = {
   lgi:          '/lgi/dashboard',
 }
 
-// Routes each role is allowed to visit (prefix match)
 const ROLE_ALLOWED_PREFIXES: Record<string, string[]> = {
   corps_member: ['/member'],
-  clo:          ['/clo', '/member'],  // CLO can also preview member views
-  lgi:          ['/lgi'],
+  clo:          ['/clo', '/member'],
+  lgi:          ['/lgi', '/member'],
 }
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
 
-  // Build a response we can attach cookie updates to
   let response = NextResponse.next({
     request: { headers: request.headers },
   })
 
-  // Create Supabase client that reads/writes cookies
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
@@ -46,48 +45,36 @@ export async function middleware(request: NextRequest) {
     },
   )
 
-  // Refresh session — required to keep session alive
   const { data: { user } } = await supabase.auth.getUser()
 
-  // ── Unauthenticated user trying to access a protected route ──
   const isProtected = pathname.startsWith('/member')
                    || pathname.startsWith('/clo')
                    || pathname.startsWith('/lgi')
 
+  // ── Unauthenticated → redirect to login ──────────────────────
   if (isProtected && !user) {
     const loginUrl = new URL('/login', request.url)
     loginUrl.searchParams.set('next', pathname)
     return NextResponse.redirect(loginUrl)
   }
 
-  // ── Logged-in user visiting /login — send to their dashboard ──
-  if (pathname === '/login' && user) {
-    const { data: profile } = await supabase
-      .from('users')
-      .select('role')
-      .eq('id', user.id)
-      .single()
-
-    const home = ROLE_HOME[profile?.role ?? ''] ?? '/login'
-    return NextResponse.redirect(new URL(home, request.url))
-  }
-
-  // ── Logged-in user visiting wrong role's area ────────────────
-  if (isProtected && user) {
-    const { data: profile } = await supabase
-      .from('users')
-      .select('role')
-      .eq('id', user.id)
-      .single()
-
-    const role = profile?.role ?? ''
+  if (user) {
+    // ── Get role from JWT metadata — no DB query needed ─────────
+    const role = (user.user_metadata?.role ?? '') as string
+    const home    = ROLE_HOME[role]            ?? '/login'
     const allowed = ROLE_ALLOWED_PREFIXES[role] ?? []
-    const canAccess = allowed.some(prefix => pathname.startsWith(prefix))
 
-    if (!canAccess) {
-      // Redirect to their correct home instead of showing 403
-      const home = ROLE_HOME[role] ?? '/login'
+    // Logged-in user visiting /login or /signup → send to dashboard
+    if (pathname === '/login' || pathname === '/signup') {
       return NextResponse.redirect(new URL(home, request.url))
+    }
+
+    // Logged-in user visiting wrong role's area → redirect to own home
+    if (isProtected) {
+      const canAccess = allowed.some(prefix => pathname.startsWith(prefix))
+      if (!canAccess) {
+        return NextResponse.redirect(new URL(home, request.url))
+      }
     }
   }
 
@@ -96,7 +83,6 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    // Run on all routes except Next.js internals and static files
-    '/((?!_next/static|_next/image|favicon.ico|icons|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+    '/((?!_next/static|_next/image|favicon.ico|icons|sw.js|manifest.webmanifest|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
   ],
 }

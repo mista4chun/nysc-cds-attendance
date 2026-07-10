@@ -6,7 +6,7 @@ import { useRouter }    from 'next/navigation'
 import { useForm }      from 'react-hook-form'
 import { zodResolver }  from '@hookform/resolvers/zod'
 import { z }            from 'zod'
-import { createClient } from '@/lib/supabase/client'
+
 import { MapPin, Loader2, LocateFixed, Clock, AlertCircle } from 'lucide-react'
 
 // ── Validation ────────────────────────────────────────────────
@@ -14,8 +14,8 @@ const SessionSchema = z.object({
   cds_group_id:    z.string().min(1, 'Select a CDS group'),
   title:          z.string().min(2, 'Title is required').max(100),
   location_name:  z.string().min(2, 'Location name is required').max(150),
-  latitude:       z.number({ invalid_type_error: 'Capture your GPS location' }),
-  longitude:      z.number({ invalid_type_error: 'Capture your GPS location' }),
+  latitude:       z.number(),
+  longitude:      z.number(),
   allowed_radius: z.number().int().min(50).max(1000),
   date:           z.string().min(1, 'Date is required'),
   start_time:     z.string().min(1, 'Start time is required'),

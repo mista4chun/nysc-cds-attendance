@@ -9,15 +9,20 @@ import { z }                  from 'zod'
 import { createClient }       from '@/lib/supabase/client'
 import { Loader2, Check }     from 'lucide-react'
 
-const DAYS = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday']
+export const DAYS = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'] as const
+export type MeetingDay = typeof DAYS[number]
 
 const GroupSchema = z.object({
   name:        z.string().min(2, 'Group name must be at least 2 characters').max(80),
   description: z.string().max(300).optional(),
-  meeting_day: z.enum(
-    ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'],
-    { errorMap: () => ({ message: 'Select a meeting day' }) }
-  ),
+meeting_day: z.union([
+  z.literal('Monday'),
+  z.literal('Tuesday'),
+  z.literal('Wednesday'),
+  z.literal('Thursday'),
+  z.literal('Friday'),
+  z.literal('Saturday'),
+], { error: 'Select a meeting day' }),
 })
 
 type GroupFields = z.infer<typeof GroupSchema>
@@ -172,3 +177,4 @@ const inputCls = (hasError: boolean) =>
   `w-full px-3 py-2.5 rounded-lg border text-sm bg-white
    focus:outline-none focus:ring-2 focus:ring-green-600 focus:border-transparent transition-shadow
    ${hasError ? 'border-red-400 bg-red-50' : 'border-gray-300'}`
+

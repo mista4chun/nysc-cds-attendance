@@ -43,8 +43,9 @@ async function fetchMembers({
  // Replace the entire defaulters block with this:
 if (mode === 'defaulters') {
   let q = supabase
-    .from('v_attendance_summary')
-    .select('user_id, full_name, state_code, group_name, attendance_pct, clearance_eligible')
+    .from('v_current_month_attendance')
+    .select('user_id, full_name, state_code, group_name, attendance_pct, cleared')
+
     // ↑ removed { count: 'exact' } — views without id column break exact count
     .lt('attendance_pct', 75)
 
@@ -63,7 +64,7 @@ if (mode === 'defaulters') {
     cds_group_id:       null,
     cds_groups:         { name: d.group_name },
     attendance_pct:     d.attendance_pct,
-    clearance_eligible: d.clearance_eligible,
+    clearance_eligible: d.cleared,
   }))
 
   return {
@@ -77,6 +78,7 @@ if (mode === 'defaulters') {
     .from('users')
     .select('id, full_name, state_code, phone_number, cds_group_id, cds_groups!users_cds_group_id_fkey(name)', { count: 'exact' })
     .eq('role', 'corps_member')
+    .eq('service_status', 'active')
 
   if (mode === 'unassigned') q = q.is('cds_group_id', null)
   if (groupId)               q = q.eq('cds_group_id', groupId)
@@ -301,7 +303,7 @@ export function MembersSearch({ groups }: Props) {
                   ${mode === 'defaulters' ? 'bg-red-100' : 'bg-gray-100'}`}>
                   <span className={`text-xs font-semibold
                     ${mode === 'defaulters' ? 'text-red-600' : 'text-gray-600'}`}>
-                    {m.full_name?.split(' ').slice(0, 2).map(n => n[0]).join('')}
+                    {m.full_name?.split(' ').slice(0, 2).map((n: string)=> n[0]).join('')}
                   </span>
                 </div>
 
