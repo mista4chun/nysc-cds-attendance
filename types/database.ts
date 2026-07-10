@@ -90,7 +90,14 @@ export type Database = {
             foreignKeyName: "announcements_created_by_fkey"
             columns: ["created_by"]
             isOneToOne: false
-            referencedRelation: "v_attendance_summary"
+            referencedRelation: "v_current_month_attendance"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "announcements_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "v_monthly_attendance"
             referencedColumns: ["user_id"]
           },
         ]
@@ -148,7 +155,14 @@ export type Database = {
             foreignKeyName: "attendance_records_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
-            referencedRelation: "v_attendance_summary"
+            referencedRelation: "v_current_month_attendance"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "attendance_records_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "v_monthly_attendance"
             referencedColumns: ["user_id"]
           },
         ]
@@ -222,7 +236,14 @@ export type Database = {
             foreignKeyName: "attendance_sessions_created_by_fkey"
             columns: ["created_by"]
             isOneToOne: false
-            referencedRelation: "v_attendance_summary"
+            referencedRelation: "v_current_month_attendance"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "attendance_sessions_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "v_monthly_attendance"
             referencedColumns: ["user_id"]
           },
         ]
@@ -264,43 +285,68 @@ export type Database = {
             foreignKeyName: "cds_groups_created_by_fkey"
             columns: ["created_by"]
             isOneToOne: false
-            referencedRelation: "v_attendance_summary"
+            referencedRelation: "v_current_month_attendance"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "cds_groups_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "v_monthly_attendance"
             referencedColumns: ["user_id"]
           },
         ]
       }
       users: {
         Row: {
+          batch: string | null
           cds_group_id: string | null
           created_at: string
           email: string | null
           full_name: string
           id: string
+          last_login_at: string | null
           phone_number: string
           profile_photo: string | null
+          promoted_to_clo_at: string | null
           role: string
+          service_end_date: string | null
+          service_start_date: string | null
+          service_status: string
           state_code: string
         }
         Insert: {
+          batch?: string | null
           cds_group_id?: string | null
           created_at?: string
           email?: string | null
           full_name: string
           id: string
+          last_login_at?: string | null
           phone_number: string
           profile_photo?: string | null
+          promoted_to_clo_at?: string | null
           role?: string
+          service_end_date?: string | null
+          service_start_date?: string | null
+          service_status?: string
           state_code: string
         }
         Update: {
+          batch?: string | null
           cds_group_id?: string | null
           created_at?: string
           email?: string | null
           full_name?: string
           id?: string
+          last_login_at?: string | null
           phone_number?: string
           profile_photo?: string | null
+          promoted_to_clo_at?: string | null
           role?: string
+          service_end_date?: string | null
+          service_start_date?: string | null
+          service_status?: string
           state_code?: string
         }
         Relationships: [
@@ -322,18 +368,22 @@ export type Database = {
       }
     }
     Views: {
-      v_attendance_summary: {
+      v_current_month_attendance: {
         Row: {
           absent_count: number | null
           attendance_pct: number | null
+          batch: string | null
           cds_group_id: string | null
-          clearance_eligible: boolean | null
+          cleared: boolean | null
           excused_count: number | null
           full_name: string | null
           group_name: string | null
+          month_key: string | null
+          month_label: string | null
           present_count: number | null
+          service_status: string | null
+          sessions_held: number | null
           state_code: string | null
-          total_sessions: number | null
           user_id: string | null
         }
         Relationships: [
@@ -356,19 +406,60 @@ export type Database = {
       v_group_attendance: {
         Row: {
           avg_attendance_pct: number | null
+          current_month_sessions: number | null
           id: string | null
           meeting_day: string | null
           member_count: number | null
           name: string | null
-          total_present: number | null
           total_sessions: number | null
         }
         Relationships: []
       }
+      v_monthly_attendance: {
+        Row: {
+          absent_count: number | null
+          attendance_pct: number | null
+          batch: string | null
+          cds_group_id: string | null
+          cleared: boolean | null
+          excused_count: number | null
+          full_name: string | null
+          group_name: string | null
+          month_key: string | null
+          month_label: string | null
+          present_count: number | null
+          service_status: string | null
+          sessions_held: number | null
+          state_code: string | null
+          user_id: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "users_cds_group_id_fkey"
+            columns: ["cds_group_id"]
+            isOneToOne: false
+            referencedRelation: "cds_groups"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "users_cds_group_id_fkey"
+            columns: ["cds_group_id"]
+            isOneToOne: false
+            referencedRelation: "v_group_attendance"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Functions: {
+      demote_from_clo: {
+        Args: { p_group_id: string; p_user_id: string }
+        Returns: undefined
+      }
       flag_suspicious_records: { Args: never; Returns: number }
       get_user_role: { Args: never; Returns: string }
+      pass_out_batch: { Args: { p_batch: string }; Returns: number }
+      promote_to_clo: { Args: { p_user_id: string }; Returns: undefined }
     }
     Enums: {
       [_ in never]: never
