@@ -10,6 +10,7 @@ import { createClient } from '@/lib/supabase/client';
 import Link from 'next/link';
 import Image from 'next/image';
 import logo from '@/public/logo.png';
+import { PasswordInput } from '@/components/ui/PasswordInput';
 
 // ── Validation schema ─────────────────────────────────────────
 const LoginSchema = z.object({
@@ -162,7 +163,7 @@ export default function LoginPage() {
             >
               Password
             </label>
-            <input
+            {/* <input
               id="password"
               type="password"
               placeholder="Enter your password"
@@ -171,6 +172,12 @@ export default function LoginPage() {
                 focus:outline-none focus:ring-2 focus:ring-green-600 focus:border-transparent
                 ${errors.password ? 'border-red-400 bg-red-50' : 'border-gray-300'}`}
               {...register('password')}
+            /> */}
+            <PasswordInput
+              {...register('password')}
+              placeholder="Enter your password"
+              autoComplete="current-password"
+              hasError={!!errors.password}
             />
             {errors.password && (
               <p className="mt-1 text-xs text-red-600">
