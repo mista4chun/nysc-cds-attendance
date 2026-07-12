@@ -44,12 +44,12 @@ export default function RootLayout({
   <meta name="theme-color" content="#006400" />
 </head>
       <body>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
+      <ThemeProvider
+  attribute="class"
+  defaultTheme="light"
+  enableSystem={false}
+  disableTransitionOnChange
+>
           <Providers>{children}</Providers>
         </ThemeProvider>
         <ServiceWorkerRegistration />
