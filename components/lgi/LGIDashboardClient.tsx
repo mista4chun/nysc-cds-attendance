@@ -273,10 +273,28 @@ export function LGIDashboardClient({
               <YAxis
                 type="category"
                 dataKey="name"
-                width={130}
-                tick={{ fontSize: 10, fill: '#374151' }}
+                width={120}
                 tickLine={false}
                 axisLine={false}
+                tick={(props) => {
+                  const { x, y, payload } = props;
+                  const name =
+                    payload.value.length > 14
+                      ? payload.value.slice(0, 14) + '…'
+                      : payload.value;
+                  return (
+                    <text
+                      x={x}
+                      y={y}
+                      dy={4}
+                      textAnchor="end"
+                      fontSize={10}
+                      fill="#374151"
+                    >
+                      {name}
+                    </text>
+                  );
+                }}
               />
               <Tooltip
                 contentStyle={{
