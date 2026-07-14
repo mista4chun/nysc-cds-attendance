@@ -31,7 +31,7 @@ type LoginFields = z.infer<typeof LoginSchema>;
 // We store users in Supabase Auth using a synthetic email
 // so we can use standard password auth without a real email.
 function toEmail(stateCode: string) {
-  return `${stateCode.toLowerCase().replace(/\//g, '-')}@nysc-cds.internal`;
+  return `${stateCode.toLowerCase().replace(/\//g, '-')}@nysc-cds.com`
 }
 
 export default function LoginPage() {

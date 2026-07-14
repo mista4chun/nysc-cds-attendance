@@ -37,7 +37,7 @@ const SignupSchema = z
 type SignupFields = z.infer<typeof SignupSchema>;
 
 function toEmail(stateCode: string) {
-  return `${stateCode.toLowerCase().replace(/\//g, '-')}@nysc-cds.internal`;
+  return `${stateCode.toLowerCase().replace(/\//g, '-')}@nysc-cds.com`
 }
 
 export default function SignupPage() {
