@@ -180,37 +180,52 @@ export function LGIDashboardClient({
             Clearance eligibility
           </h2>
           {totalMembers > 0 ? (
-            <ResponsiveContainer width="100%" height={240}>
-              <PieChart margin={{ top: 0, right: 0, bottom: 20, left: 0 }}>
-                <Pie
-                  data={pieData}
-                  cx="50%"
-                  cy="50%"
-                  innerRadius={55}
-                  outerRadius={80}
-                  paddingAngle={3}
-                  dataKey="value"
-                >
-                  {pieData.map((_, i) => (
-                    <Cell key={i} fill={COLORS[i]} />
-                  ))}
-                </Pie>
-                <Tooltip
-                  contentStyle={{
-                    fontSize: 12,
-                    borderRadius: 8,
-                    border: '1px solid #e5e7eb',
-                  }}
-                  formatter={(value) => [`${value} members`, ''] as any}
-                />
-                <Legend
+            <>
+              <ResponsiveContainer width="100%" height={240}>
+                <PieChart margin={{ top: 0, right: 0, bottom: 20, left: 0 }}>
+                  <Pie
+                    data={pieData}
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={55}
+                    outerRadius={80}
+                    paddingAngle={3}
+                    dataKey="value"
+                    label={false}
+                    legendType="none"
+                  >
+                    {pieData.map((_, i) => (
+                      <Cell key={i} fill={COLORS[i]} />
+                    ))}
+                  </Pie>
+                  <Tooltip
+                    contentStyle={{
+                      fontSize: 12,
+                      borderRadius: 8,
+                      border: '1px solid #e5e7eb',
+                    }}
+                    formatter={(value) => [`${value} members`, ''] as any}
+                  />
+                  {/* <Legend
                   iconType="circle"
                   iconSize={8}
                   wrapperStyle={{ fontSize: 11, paddingTop: '12px' }}
                   formatter={(value) => value}
-                />
-              </PieChart>
-            </ResponsiveContainer>
+                /> */}
+                </PieChart>
+              </ResponsiveContainer>
+
+              <div className="flex items-center justify-center gap-6 mt-2">
+                <span className="flex items-center gap-1.5 text-xs text-gray-600">
+                  <span className="w-3 h-3 rounded-full bg-green-700 inline-block flex-shrink-0" />
+                  Eligible ({eligible})
+                </span>
+                <span className="flex items-center gap-1.5 text-xs text-gray-600">
+                  <span className="w-3 h-3 rounded-full bg-red-600 inline-block flex-shrink-0" />
+                  Not eligible ({notEligible})
+                </span>
+              </div>
+            </>
           ) : (
             <div className="h-48 flex items-center justify-center text-sm text-gray-400">
               No member data yet
@@ -258,8 +273,8 @@ export function LGIDashboardClient({
               <YAxis
                 type="category"
                 dataKey="name"
-                width={110}
-                tick={{ fontSize: 11, fill: '#374151' }}
+                width={130}
+                tick={{ fontSize: 10, fill: '#374151' }}
                 tickLine={false}
                 axisLine={false}
               />
@@ -271,7 +286,7 @@ export function LGIDashboardClient({
                 }}
                 formatter={(value) => [`${value}%`, 'Attendance']}
               />
-              <Bar dataKey="pct" radius={[0, 4, 4, 0]} legendType='none'>
+              <Bar dataKey="pct" radius={[0, 4, 4, 0]} legendType="none">
                 {groups.map((g, i) => (
                   <Cell
                     key={i}
