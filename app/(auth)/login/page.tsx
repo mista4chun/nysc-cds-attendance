@@ -17,7 +17,10 @@ const LoginSchema = z.object({
   state_code: z
     .string()
     .min(1, 'State code is required')
-    .regex(/^[A-Z]{2}\/\d{2}[A-Z]\/\d{4}$/i, 'Format must be: LA/23A/1234')
+    .regex(
+      /^([A-Z]{2}\/\d{2}[A-Z]\/\d{4}|LGI\/[A-Z]+\/\d{2})$/i,
+      'Format must be: LA/23A/1234 or LGI/[A-Z]+/\\d{2}',
+    )
     .transform((val) => val.toUpperCase()),
   password: z.string().min(6, 'Password must be at least 6 characters'),
 });
@@ -163,7 +166,7 @@ export default function LoginPage() {
             >
               Password
             </label>
-           
+
             <PasswordInput
               {...register('password')}
               placeholder="Enter your password"
@@ -210,11 +213,10 @@ export default function LoginPage() {
       </div>
 
       {/* Footer */}
-      
+
       <p className="mt-6 text-xs text-gray-400">
         NYSC Community Development Service · LGA Attendance System
       </p>
-    
     </div>
   );
 }
