@@ -58,16 +58,20 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(loginUrl)
   }
 
-  if (user) {
-    // ── Get role from JWT metadata — no DB query needed ─────────
-    const role = (user.user_metadata?.role ?? '') as string
-    const home    = ROLE_HOME[role]            ?? '/login'
-    const allowed = ROLE_ALLOWED_PREFIXES[role] ?? []
+ if (user) {
+  const role    = (user.user_metadata?.role ?? '') as string
+  const home    = ROLE_HOME[role] ?? '/login'
+  const allowed = ROLE_ALLOWED_PREFIXES[role] ?? []
 
-    // Logged-in user visiting /login or /signup → send to dashboard
-    if (pathname === '/login' || pathname === '/signup') {
-      return NextResponse.redirect(new URL(home, request.url))
-    }
+  // If role is unknown, don't redirect — let them through to avoid loop
+  if (!role || !ROLE_HOME[role]) {
+    return response
+  }
+
+  // Logged-in user visiting /login or /signup → send to dashboard
+  if (pathname === '/login' || pathname === '/signup') {
+    return NextResponse.redirect(new URL(home, request.url))
+  }
 
     // Logged-in user visiting wrong role's area → redirect to own home
     if (isProtected) {
