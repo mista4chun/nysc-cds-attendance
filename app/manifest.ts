@@ -1,45 +1,4 @@
-// // app/manifest.ts
-// import type { MetadataRoute } from 'next'
 
-// export default function manifest(): MetadataRoute.Manifest {
-//   return {
-//     name: 'NYSC CDS Attendance',
-//     short_name: 'NYSC Attend',
-//     description: 'CDS attendance management for corps members',
-//     start_url: '/',
-//     display: 'standalone',
-//     background_color: '#ffffff',
-//     theme_color: '#006400',
-//     orientation: 'portrait',
-//     icons: [
-      // {
-      //   src: '/icons/manifest-icon-192.maskable.png',
-      //   sizes: '192x192',
-      //   type: 'image/png',
-      // },
-      // {
-      //   src: '/icons/manifest-icon-512.maskable.png',
-      //   sizes: '512x512',
-      //   type: 'image/png',
-      // },
-      //  {
-      //   src: '/icons/apple-icon-180.png',
-      //   sizes: '180x180',
-      //   type: 'image/png',
-      // },
-      // {
-      //   src: '/icons/manifest-icon-512.maskable.png',
-      //   sizes: '512x512',
-      //   type: 'image/png',
-      //   purpose: 'maskable',   // Android adaptive icon
-      // },
-//     ],
-//   }
-// }
-
-// ============================================================
-// FILE 1: app/manifest.ts  — complete PWA manifest
-// ============================================================
 
 import type { MetadataRoute } from 'next'
 

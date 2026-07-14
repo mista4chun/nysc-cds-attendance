@@ -11,6 +11,7 @@ import { createClient } from '@/lib/supabase/client';
 import { Loader2 } from 'lucide-react';
 import Image from 'next/image';
 import logo from '@/public/logo.png';
+import { PasswordInput } from '@/components/ui/PasswordInput';
 
 const SignupSchema = z
   .object({
@@ -125,8 +126,8 @@ export default function SignupPage() {
             src={logo}
             alt="CDS Logo"
             className="w-full h-full object-contain"
-              width={192}
-  height={192}
+            width={192}
+            height={192}
             priority
           />
         </div>
@@ -185,12 +186,11 @@ export default function SignupPage() {
 
           {/* Password */}
           <Field label="Password" error={errors.password?.message} required>
-            <input
+            <PasswordInput
               {...register('password')}
-              type="password"
               placeholder="At least 6 characters"
               autoComplete="new-password"
-              className={inputCls(!!errors.password)}
+              hasError={!!errors.password}
             />
           </Field>
 
@@ -200,12 +200,11 @@ export default function SignupPage() {
             error={errors.confirm_password?.message}
             required
           >
-            <input
+            <PasswordInput
               {...register('confirm_password')}
-              type="password"
               placeholder="Re-enter your password"
               autoComplete="new-password"
-              className={inputCls(!!errors.confirm_password)}
+              hasError={!!errors.confirm_password}
             />
           </Field>
 

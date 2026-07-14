@@ -10,6 +10,7 @@ import { createClient } from '@/lib/supabase/client';
 import Link from 'next/link';
 import Image from 'next/image';
 import logo from '@/public/logo.png';
+import { PasswordInput } from '@/components/ui/PasswordInput';
 
 // ── Validation schema ─────────────────────────────────────────
 const LoginSchema = z.object({
@@ -162,15 +163,12 @@ export default function LoginPage() {
             >
               Password
             </label>
-            <input
-              id="password"
-              type="password"
+           
+            <PasswordInput
+              {...register('password')}
               placeholder="Enter your password"
               autoComplete="current-password"
-              className={`w-full px-3 py-2.5 rounded-lg border text-sm
-                focus:outline-none focus:ring-2 focus:ring-green-600 focus:border-transparent
-                ${errors.password ? 'border-red-400 bg-red-50' : 'border-gray-300'}`}
-              {...register('password')}
+              hasError={!!errors.password}
             />
             {errors.password && (
               <p className="mt-1 text-xs text-red-600">
@@ -212,9 +210,11 @@ export default function LoginPage() {
       </div>
 
       {/* Footer */}
+      
       <p className="mt-6 text-xs text-gray-400">
         NYSC Community Development Service · LGA Attendance System
       </p>
+    
     </div>
   );
 }

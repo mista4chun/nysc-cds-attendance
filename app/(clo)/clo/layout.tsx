@@ -190,7 +190,12 @@ export default function CLOLayout({ children }: { children: React.ReactNode }) {
 
         {/* ── Main content ─────────────────────────────────── */}
         <main className="lg:pl-64 pt-14 lg:pt-0 min-h-screen">
-          <div className="max-w-5xl mx-auto px-4 py-6">{children}</div>
+          <div className="max-w-5xl mx-auto px-4 py-6">
+            {children}
+            <p className="text-center text-[10px] text-muted-foreground/50 py-4 mt-8">
+              Made with ♥ by Hilary Samson · Batch B2 2025
+            </p>
+          </div>
         </main>
 
         {/* ── Bottom nav (mobile only) ──────────────────────── */}
