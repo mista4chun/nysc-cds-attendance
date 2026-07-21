@@ -1,5 +1,4 @@
-// Universal loading.tsx — works for CLO, LGI, and Member routes
-// Uses semantic tokens so it respects dark mode automatically
+
 
 export default function Loading() {
   return (
