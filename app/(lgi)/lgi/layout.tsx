@@ -3,14 +3,13 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import { RoleGuard } from '@/components/layout/RoleGuard';
 import {
   LayoutDashboard,
   FileText,
   ScrollText,
-  LogOut,
   Menu,
   X,
   ChevronRight,
@@ -20,6 +19,7 @@ import {
 import Image from 'next/image';
 import logo from '@/public/logo.png';
 
+import { LogoutButton } from '@/components/layout/LogoutButton';
 const NAV = [
   { href: '/lgi/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/lgi/members', label: 'Members', icon: Users },
@@ -29,7 +29,7 @@ const NAV = [
 
 export default function LGILayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const router = useRouter();
+
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [profile, setProfile] = useState<{
     full_name: string;
@@ -48,13 +48,6 @@ export default function LGILayout({ children }: { children: React.ReactNode }) {
         .then(({ data }) => setProfile(data));
     });
   }, []);
-
-  const handleLogout = async () => {
-    const supabase = createClient();
-    await supabase.auth.signOut();
-    router.push('/login');
-    router.refresh();
-  };
 
   const initials =
     profile?.full_name
@@ -178,12 +171,7 @@ export default function LGILayout({ children }: { children: React.ReactNode }) {
           </div>
 
           <div className="p-3 border-t border-gray-100">
-            <button
-              onClick={handleLogout}
-              className="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-sm font-medium text-gray-500 hover:bg-red-50 hover:text-red-600 transition-colors"
-            >
-              <LogOut size={18} /> Sign out
-            </button>
+            <LogoutButton />
           </div>
         </aside>
 
@@ -191,7 +179,7 @@ export default function LGILayout({ children }: { children: React.ReactNode }) {
         <main className="lg:pl-64 pt-14 lg:pt-0 min-h-screen">
           <div className="max-w-5xl mx-auto px-4 py-6">
             {children}
-          
+
             <p className="text-center text-[10px] text-muted-foreground/50 py-4 mt-8">
               Made with ♥ by Hilary Samson · Batch B2 2025
             </p>

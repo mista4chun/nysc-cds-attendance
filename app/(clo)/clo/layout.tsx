@@ -3,7 +3,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import { RoleGuard } from '@/components/layout/RoleGuard';
 import {
@@ -11,7 +11,6 @@ import {
   Users,
   CalendarCheck,
   FileText,
-  LogOut,
   Menu,
   X,
   ChevronRight,
@@ -20,6 +19,8 @@ import {
 // import { ThemeToggle } from '@/components/layout/ThemeToggle';
 import Image from 'next/image';
 import logo from '@/public/logo.png';
+
+import { LogoutButton } from '@/components/layout/LogoutButton';
 
 const NAV = [
   { href: '/clo/dashboard', label: 'Dashboard', icon: LayoutDashboard },
@@ -31,7 +32,7 @@ const NAV = [
 
 export default function CLOLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const router = useRouter();
+
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [profile, setProfile] = useState<{
     full_name: string;
@@ -50,13 +51,6 @@ export default function CLOLayout({ children }: { children: React.ReactNode }) {
         .then(({ data }) => setProfile(data));
     });
   }, []);
-
-  const handleLogout = async () => {
-    const supabase = createClient();
-    await supabase.auth.signOut();
-    router.push('/login');
-    router.refresh();
-  };
 
   const initials =
     profile?.full_name
@@ -177,14 +171,10 @@ export default function CLOLayout({ children }: { children: React.ReactNode }) {
           </nav>
 
           {/* Logout */}
-          <div className="p-3 border-t border-gray-100">
-            <button
-              onClick={handleLogout}
-              className="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-sm font-medium text-gray-500 hover:bg-red-50 hover:text-red-600 transition-colors"
-            >
-              <LogOut size={18} />
-              Sign out
-            </button>
+          <div>
+            <div className="p-3 border-t border-gray-100">
+              <LogoutButton />
+            </div>
           </div>
         </aside>
 
