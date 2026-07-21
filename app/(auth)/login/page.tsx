@@ -57,8 +57,8 @@ export default function LoginPage() {
     const supabase = createClient();
     const email = toEmail(data.state_code);
 
-    console.log('Email:', email);
-    console.log('Password:', data.password);
+    // console.log('Email:', email);
+    // console.log('Password:', data.password);
 
     // const { error } = await supabase.auth.signInWithPassword({
     //   email,
