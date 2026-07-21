@@ -1,21 +1,30 @@
 // app/(corps-member)/member/profile/page.tsx
-import { createClient } from '@/lib/supabase/server'
-import { redirect }     from 'next/navigation'
-import { LogoutButton } from '@/components/member/LogoutButton'
+import { createClient } from '@/lib/supabase/server';
+import { redirect } from 'next/navigation';
+import { LogoutButton } from '@/components/layout/LogoutButton';
 import {
-  User, Phone, Hash, Users,
-  ShieldCheck, ShieldX, CalendarCheck
-} from 'lucide-react'
+  User,
+  Phone,
+  Hash,
+  Users,
+  ShieldCheck,
+  ShieldX,
+  CalendarCheck,
+} from 'lucide-react';
 
 export default async function ProfilePage() {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) redirect('/login')
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) redirect('/login');
 
   const [{ data: profile }, { data: summary }] = await Promise.all([
     supabase
       .from('users')
-     .select('full_name, state_code, phone_number, email, created_at, cds_groups!users_cds_group_id_fkey(name)')
+      .select(
+        'full_name, state_code, phone_number, email, created_at, cds_groups!users_cds_group_id_fkey(name)',
+      )
       .eq('id', user.id)
       .single(),
     supabase
@@ -23,11 +32,11 @@ export default async function ProfilePage() {
       .select('attendance_pct, present_count,  sessions_held, cleared')
       .eq('user_id', user.id)
       .single(),
-  ])
+  ]);
 
-  const groupName = (profile?.cds_groups as any)?.name
-  const eligible  = summary?.cleared ?? false
-  const pct       = summary?.attendance_pct     ?? 0
+  const groupName = (profile?.cds_groups as any)?.name;
+  const eligible = summary?.cleared ?? false;
+  const pct = summary?.attendance_pct ?? 0;
 
   return (
     <div className="space-y-4">
@@ -37,18 +46,31 @@ export default async function ProfilePage() {
       <div className="bg-white rounded-2xl border border-gray-200 p-5 flex items-center gap-4">
         <div className="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
           <span className="text-green-800 text-xl font-bold">
-            {profile?.full_name?.split(' ').slice(0, 2).map((n: string) => n[0]).join('') ?? '?'}
+            {profile?.full_name
+              ?.split(' ')
+              .slice(0, 2)
+              .map((n: string) => n[0])
+              .join('') ?? '?'}
           </span>
         </div>
         <div>
-          <p className="text-base font-semibold text-gray-900">{profile?.full_name}</p>
+          <p className="text-base font-semibold text-gray-900">
+            {profile?.full_name}
+          </p>
           <p className="text-sm text-gray-500 mt-0.5">{profile?.state_code}</p>
-          <div className={`inline-flex items-center gap-1.5 mt-2 text-xs font-medium px-2.5 py-1 rounded-full
-            ${eligible ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-600'}`}>
-            {eligible
-              ? <><ShieldCheck size={12} /> Clearance eligible</>
-              : <><ShieldX size={12} /> Not yet eligible</>
-            }
+          <div
+            className={`inline-flex items-center gap-1.5 mt-2 text-xs font-medium px-2.5 py-1 rounded-full
+            ${eligible ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-600'}`}
+          >
+            {eligible ? (
+              <>
+                <ShieldCheck size={12} /> Clearance eligible
+              </>
+            ) : (
+              <>
+                <ShieldX size={12} /> Not yet eligible
+              </>
+            )}
           </div>
         </div>
       </div>
@@ -60,15 +82,23 @@ export default async function ProfilePage() {
         </p>
         <div className="grid grid-cols-3 gap-3 text-center mb-3">
           <div className="bg-gray-50 rounded-xl py-3">
-            <p className={`text-2xl font-bold ${pct >= 75 ? 'text-green-700' : 'text-red-600'}`}>{pct}%</p>
+            <p
+              className={`text-2xl font-bold ${pct >= 75 ? 'text-green-700' : 'text-red-600'}`}
+            >
+              {pct}%
+            </p>
             <p className="text-[10px] text-gray-400 mt-0.5">Rate</p>
           </div>
           <div className="bg-gray-50 rounded-xl py-3">
-            <p className="text-2xl font-bold text-gray-800">{summary?.present_count ?? 0}</p>
+            <p className="text-2xl font-bold text-gray-800">
+              {summary?.present_count ?? 0}
+            </p>
             <p className="text-[10px] text-gray-400 mt-0.5">Present</p>
           </div>
           <div className="bg-gray-50 rounded-xl py-3">
-            <p className="text-2xl font-bold text-gray-800">{summary?.sessions_held ?? 0}</p>
+            <p className="text-2xl font-bold text-gray-800">
+              {summary?.sessions_held ?? 0}
+            </p>
             <p className="text-[10px] text-gray-400 mt-0.5">Sessions</p>
           </div>
         </div>
@@ -90,15 +120,24 @@ export default async function ProfilePage() {
           Details
         </p>
         {[
-          { icon: User,          label: 'Full name',    value: profile?.full_name   },
-          { icon: Hash,          label: 'State code',   value: profile?.state_code  },
-          { icon: Phone,         label: 'Phone',        value: profile?.phone_number },
-          { icon: Users,         label: 'CDS group',    value: groupName ?? 'Not assigned' },
-          { icon: CalendarCheck, label: 'Member since', value: profile?.created_at
+          { icon: User, label: 'Full name', value: profile?.full_name },
+          { icon: Hash, label: 'State code', value: profile?.state_code },
+          { icon: Phone, label: 'Phone', value: profile?.phone_number },
+          {
+            icon: Users,
+            label: 'CDS group',
+            value: groupName ?? 'Not assigned',
+          },
+          {
+            icon: CalendarCheck,
+            label: 'Member since',
+            value: profile?.created_at
               ? new Date(profile.created_at).toLocaleDateString('en-NG', {
-                  day: 'numeric', month: 'long', year: 'numeric'
+                  day: 'numeric',
+                  month: 'long',
+                  year: 'numeric',
                 })
-              : '—'
+              : '—',
           },
         ].map(({ icon: Icon, label, value }) => (
           <div key={label} className="flex items-center gap-3 px-4 py-3">
@@ -115,5 +154,5 @@ export default async function ProfilePage() {
 
       <LogoutButton />
     </div>
-  )
+  );
 }
