@@ -5,7 +5,7 @@ import type { MetadataRoute } from 'next'
 export default function manifest(): MetadataRoute.Manifest {
   return {
     name:             'NYSC CDS Attendance',
-    short_name:       'NYSC Attend',
+    short_name:       'CDS Attend',
     description:      'CDS attendance management for corps members — OSISIOMA LGA',
     start_url:        '/',
     display:          'standalone',

@@ -4,6 +4,7 @@ import './globals.css';
 import { Providers } from './providers';
 import { ThemeProvider } from 'next-themes';
 import { ServiceWorkerRegistration } from '@/components/layout/ServiceWorkerRegistration';
+import { AppResumeHandler } from '@/components/layout/AppResumeHandler';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -21,12 +22,12 @@ export const metadata = {
   appleWebApp: {
     capable: true,
     statusBarStyle: 'default',
-    title: 'NYSC Attend',
+    title: 'CDS Attend',
   },
-   icons: {
-    icon:        '/logo.png',
-    apple:       '/icons/apple-icon-180.png',
-    shortcut:    '/logo.png',
+  icons: {
+    icon: '/logo.png',
+    apple: '/icons/apple-icon-180.png',
+    shortcut: '/logo.png',
   },
   formatDetection: { telephone: false },
 };
@@ -38,23 +39,22 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-     <head>
-
-  <link rel="apple-touch-icon" href="/icons/icon-180.png" />
-  <meta name="theme-color" content="#006400" />
-</head>
+      <head>
+        <link rel="apple-touch-icon" href="/icons/icon-180.png" />
+        <meta name="theme-color" content="#006400" />
+      </head>
       <body>
-      <ThemeProvider
-  attribute="class"
-  defaultTheme="light"
-  enableSystem={false}
-  disableTransitionOnChange
->
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="light"
+          enableSystem={false}
+          disableTransitionOnChange
+        >
           <Providers>{children}</Providers>
         </ThemeProvider>
         <ServiceWorkerRegistration />
+        <AppResumeHandler />
       </body>
     </html>
   );
 }
-
