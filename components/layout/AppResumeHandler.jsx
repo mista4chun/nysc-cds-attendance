@@ -14,21 +14,20 @@ export function AppResumeHandler() {
     const handleVisibilityChange = async () => {
       if (document.visibilityState !== 'visible') return
 
-      // Force Supabase to check/refresh the session on resume
+      // Skip entirely if a sign-out is in progress
+      if (sessionStorage.getItem('signing_out') === 'true') return
+
       const { data: { session }, error } = await supabase.auth.getSession()
 
       if (error || !session) {
-        // Session is dead — send to login instead of hanging
         router.push('/login')
         return
       }
 
-      // Check if token is expired or expiring within 60s
       const expiresAt = session.expires_at ?? 0
-      const now        = Math.floor(Date.now() / 1000)
+      const now       = Math.floor(Date.now() / 1000)
 
       if (expiresAt - now < 60) {
-        // Force a refresh proactively
         const { error: refreshError } = await supabase.auth.refreshSession()
         if (refreshError) {
           router.push('/login')
@@ -36,13 +35,10 @@ export function AppResumeHandler() {
         }
       }
 
-      // Session is healthy — safe to refresh the current page's data
       router.refresh()
     }
 
     document.addEventListener('visibilitychange', handleVisibilityChange)
-
-    // Also run once on mount in case the app was already backgrounded
     handleVisibilityChange()
 
     return () => document.removeEventListener('visibilitychange', handleVisibilityChange)
