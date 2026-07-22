@@ -1,22 +1,26 @@
 // components/member/LogoutButton.tsx
-'use client'
+'use client';
 
-import { useState }     from 'react'
-import { useRouter }    from 'next/navigation'
-import { createClient } from '@/lib/supabase/client'
-import { LogOut, Loader2 } from 'lucide-react'
+import { useState } from 'react';
+
+import { createClient } from '@/lib/supabase/client';
+import { LogOut, Loader2 } from 'lucide-react';
 
 export function LogoutButton() {
-  const router   = useRouter()
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
 
   const handleLogout = async () => {
-    setLoading(true)
-    const supabase = createClient()
-    await supabase.auth.signOut()
-    router.push('/login')
-    router.refresh()
-  }
+    setLoading(true);
+    sessionStorage.setItem('signing_out', 'true');
+
+    try {
+      const supabase = createClient();
+      await supabase.auth.signOut();
+    } finally {
+      sessionStorage.removeItem('signing_out');
+      window.location.href = '/login';
+    }
+  };
 
   return (
     <button
@@ -26,10 +30,15 @@ export function LogoutButton() {
         border border-red-200 text-red-600 text-sm font-medium
         hover:bg-red-50 disabled:opacity-60 transition-colors"
     >
-      {loading
-        ? <><Loader2 size={16} className="animate-spin" /> Signing out…</>
-        : <><LogOut size={16} /> Sign out</>
-      }
+      {loading ? (
+        <>
+          <Loader2 size={16} className="animate-spin" /> Signing out…
+        </>
+      ) : (
+        <>
+          <LogOut size={16} /> Sign out
+        </>
+      )}
     </button>
-  )
+  );
 }
